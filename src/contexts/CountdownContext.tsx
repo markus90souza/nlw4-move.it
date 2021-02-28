@@ -20,9 +20,8 @@ export const CountdownContext = createContext({} as CountdownProviderData );
 let countdownTimeout: NodeJS.Timeout;
 
 export const CountdownProvider = ({ children }: CountdownProviderProps ) => {
-    
-
-  let timer = 0.1 * 60;
+  
+  let timer = 25 * 60;
 
   const { startNewChallenge } = useContext(ChallengeContext);
 
@@ -35,38 +34,37 @@ export const CountdownProvider = ({ children }: CountdownProviderProps ) => {
 
   const startCountdown = () =>{
     setIsActive(true);
-    }
+  }
     
-      const endCountdown = () =>{
-        clearTimeout(countdownTimeout);
+  const endCountdown = () =>{
+    clearTimeout(countdownTimeout);
+    setIsActive(false);
+    setTime(timer);
+    setHasFinished(false);
+  }
+    
+  useEffect( () => {
+    if(isActive && time > 0){
+      countdownTimeout =  setTimeout(() => {
+        setTime(time - 1);
+      }, 1000);
+    } else if(isActive && time === 0 ){
+        setHasFinished(true);
         setIsActive(false);
-        setTime(timer);
-        setHasFinished(false);
-      }
-    
-      useEffect( () => {
-        if(isActive && time > 0){
-         countdownTimeout =  setTimeout(() => {
-            setTime(time - 1);
-          }, 1000);
-        } else if(isActive && time === 0 ){
-            setHasFinished(true);
-            setIsActive(false);
-            startNewChallenge();
-        }
-      }, [isActive, time])
+        startNewChallenge();
+    }
+  }, [isActive, time]);
 
-
-      return (
-          <CountdownContext.Provider value={{
-              minutes,
-              seconds,
-              hasFinished,
-              isActive,
-              startCountdown,
-              endCountdown
-          }}>
-              {children}
-          </CountdownContext.Provider>
-      )
+  return (
+      <CountdownContext.Provider value={{
+          minutes,
+          seconds,
+          hasFinished,
+          isActive,
+          startCountdown,
+          endCountdown
+      }}>
+        {children}
+      </CountdownContext.Provider>
+  )
 }

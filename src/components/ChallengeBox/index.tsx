@@ -41,7 +41,7 @@ const ChallengeBox: React.FC = () => {
         <footer>
           <button 
             type="button"
-            onClick={handleChallangeFailed}
+            onClick={resetChallenge}
             className={styles.ChallengeFailedButton}>
               Falhei
             </button>
